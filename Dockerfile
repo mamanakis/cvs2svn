@@ -17,13 +17,14 @@
 
 FROM debian:jessie AS run
 
-# Point to the Debian archive and disable expired repository date checks
-RUN echo "deb http://archive.debian.org/debian/ jessie main" > /etc/apt/sources.list && \
-    echo "deb-src http://archive.debian.org/debian/ jessie main" >> /etc/apt/sources.list && \
+# Clear out dead secondary repos, point to the archive, and disable expiration checks
+RUN rm -rf /etc/apt/sources.list.d/* && \
+    echo "deb http://archive.debian.org/debian/ jessie main" > /etc/apt/sources.list && \
     echo "Acquire::Check-Valid-Until false;" > /etc/apt/apt.conf.d/10-nocheckvalid
 
+# Update and install dependencies, forcing acceptance of expired archive keys
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --force-yes --no-install-recommends \
         python \
         python-bsddb3 \
         subversion \
@@ -33,7 +34,7 @@ RUN apt-get update && \
 RUN mkdir /src
 WORKDIR /src
 COPY . .
-RUN ${PYTHON} ./setup.py install
+RUN ${PYTHON:-python} ./setup.py install
 
 # The CVS repository can be mounted here:
 VOLUME ["/cvs"]
