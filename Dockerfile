@@ -17,6 +17,11 @@
 
 FROM debian:jessie AS run
 
+# Point to the Debian archive and disable expired repository date checks
+RUN echo "deb http://archive.debian.org/debian/ jessie main" > /etc/apt/sources.list && \
+    echo "deb-src http://archive.debian.org/debian/ jessie main" >> /etc/apt/sources.list && \
+    echo "Acquire::Check-Valid-Until false;" > /etc/apt/apt.conf.d/10-nocheckvalid
+
 RUN apt-get update && \
     apt-get install -y \
         python \
