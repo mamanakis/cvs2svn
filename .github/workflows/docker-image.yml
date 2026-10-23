@@ -24,6 +24,8 @@ jobs:
           target: test
           load: true
           tags: cvs2svn-test:local
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Execute tests
         run: docker run --rm cvs2svn-test:local
@@ -41,3 +43,4 @@ jobs:
           target: run
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/cvs2svn:latest
+          cache-from: type=gha
